@@ -1,0 +1,12 @@
+<head>
+    <title>{{message}}</title>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/sweetalert.css">
+</head>
+<pre>{{error.stack}}</pre>
+<script src="/javascripts/sweetalert.min.js"></script>
+<script>
+    swal("{{error.status}}", "{{message}}","error");
+    setTimeout(function () {
+        window.location.href= '/';
+    },3000);
+</script>

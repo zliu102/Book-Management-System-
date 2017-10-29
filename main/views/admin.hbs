@@ -1,0 +1,237 @@
+
+<div class="container">
+    <h2 class="">{{title}} </h2>
+    <div class="col-xs-12">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="row">
+                    <div class="col-sm-8 col-xs-12">
+                        <h3>add Department</h3>
+                        <form class="form-group" action="/admin/add-department-info" method="post">
+                            <div class="form-group">
+                                <label for="DepartmentID">DepartmentID</label>
+                                <input required="true"  type="text" name="DeptID" class="form-control" id="DepartmentID" placeholder="Department ID">
+                            </div>
+                            <div class="form-group">
+                                <label for="DepartmentName">DepartmentName</label>
+                                <input required="true"  type="text" name="DeptName" class="form-control" id="DepartmentName" placeholder="Department Name">
+                            </div>
+                            <div class="form-group">
+                                <label for="Location">Location</label>
+                                <input type="text" name="Location" class="form-control" id="Location" placeholder="Location">
+                            </div>
+
+                            <button type="submit" class="btn btn-default">Submit</button>
+                        </form>
+                    </div>
+                    <div class="col-sm-4 col-xs-12">
+                        <h3>Current Departments</h3>
+                        <ul class="list-group">
+                            {{#each departments}}
+                                <li class="list-group-item">
+                                    <h4>{{ this.DeptName }}</h4>
+                                    <h5>Location: {{ this.Location }}</h5>
+                                </li>
+                            {{/each}}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="col-xs-12">
+                <div class="row">
+                    <div class="col-sm-8 col-xs-12">
+                        <div id="course">
+                            <h3>add Course</h3>
+                            <form class="form-group" action="/admin/add-course-info" method="post">
+                                <div class="form-group">
+                                    <label for="CourseID">Course ID</label>
+                                    <input required="true"  type="text" name="CourseID" class="form-control" id="CourseID" placeholder="CourseID">
+                                </div>
+                                <div class="form-group">
+                                    <label for="CourseName">Course Name</label>
+                                    <input required="true"  type="text" name="CourseName" class="form-control" id="CourseName" placeholder="CourseName">
+                                </div>
+                                <div class="form-group">
+                                    <label for="departmentCourse">Select Department</label>
+                                    <select required="true"  name="departmentCourse" class="form-control">
+                                        {{#each departments}}
+                                            <option departmentCourse="{{ this.DeptName }}" >{{ this.DeptID }}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="ClassBook">Select Class Book</label>
+                                    <select required="true" multiple name="ClassBook" class="form-control" style="height:200px">
+                                        {{#each books}}
+                                            <option ClassBook="{{ this.ISBN }}" >{{ this.ISBN }}<span>: {{ this.Title }}-{{ this.Authors }}</span></option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-default">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 col-xs-12">
+                        <h3>Current Courses</h3>
+                        <ul class="list-group">
+                            {{#each courses}}
+                                <li class="list-group-item">
+                                    <h5>CourseNumber: {{ this.CourseNumber }}</h5>
+                                    <h5>CourseName: {{this.CourseName}} </h5>
+                                    <h5>Books: {{ this.Books }}</h5>
+                                </li>
+                            {{/each}}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="col-xs-12">
+                <div class="row">
+                    <div class="col-sm-8 col-xs-12">
+                        <div id="staff">
+                            <h3>add staff</h3>
+                            <form class="form-group" action="/admin/add-staff-info" method="post">
+                                <div class="form-group">
+                                    <label for="staff_email">Email address</label>
+                                    <input required="true"  type="email" name="email" class="form-control" id="student_email" placeholder="Email">
+                                </div>
+                                <div class="form-group">
+                                    <label for="staff_password">Password</label>
+                                    <input required="true"  type="password" name="password" class="form-control" id="student_password" placeholder="Password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="SSN">SSN</label>
+                                    <input required="true"  type="text" name="SSN" class="form-control" id="SSN" placeholder="SSN">
+                                </div>
+                                <div class="form-group">
+                                    <label for="f_name">First name</label>
+                                    <input required="true"  type="text"  name="f_name" class="form-control" id="f_name" placeholder="first name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="l_name">Last name</label>
+                                    <input required="true"  type="text" name="l_name" class="form-control" id="l_name" placeholder="last name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="staff_birthday">Staff birthday</label>
+                                    <input type="text"  name="birthday" class="form-control" id="staff_birthday" placeholder="ex:2000-01-01">
+                                </div>
+                                <div class="form-group">
+                                    <label for="Job_Title">Job Title</label>
+                                    <input type="text"  name="JobTitle" class="form-control" id="Job_Title" placeholder="">
+                                </div>
+                                <div class="form-group">
+                                    <label for="workFor">Work for</label>
+                                    <select required="true"  name="workFor" class="form-control">
+                                        {{#each departments}}
+                                            <option value="{{this.DeptID}}:{{this._id}}:{{this.DeptName}}" >{{ this.DeptID }}:{{ this.DeptName }}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="radio-inline"><input type="radio" value="1" checked name="level">1.Teacher</label>
+                                    <label class="radio-inline"><input type="radio" value="0" name="level">2.Staff</label>
+                                </div>
+                                <button type="submit" class="btn btn-default">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 col-xs-12">
+                        <h3>Current Staffs</h3>
+                        <ul class="list-group">
+                            {{#each staffs}}
+                                <li class="list-group-item">
+                                    <h5>{{this.Level}} {{this.WorkFor.JobTitle}}</h5>
+                                    <h5>SSN: {{this.SSN}}</h5>
+                                    <h5>{{ this.FirstName }} {{this.LastName}}</h5>
+                                    <h5>Email: {{this.Email}}</h5>
+                                </li>
+                            {{/each}}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="divider"></div>
+
+            <div class="col-xs-12">
+                <div class="row">
+                    <div class="col-sm-8 col-xs-12">
+                        <div id="student">
+                            <h3>add student</h3>
+                            <form class="form-group" action="/admin/add-student-info" method="post">
+                                <div class="form-group">
+                                    <label for="student_email">Email address</label>
+                                    <input required="true"  type="email" name="email" class="form-control" id="student_email" placeholder="Email">
+                                </div>
+                                <div class="form-group">
+                                    <label for="student_password">Password</label>
+                                    <input required="true"  type="password" name="password" class="form-control" id="student_password" placeholder="Password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cwid">CWID</label>
+                                    <input required="true"  type="text" name="CWID" class="form-control" id="cwid" placeholder="CWID">
+                                </div>
+                                <div class="form-group">
+                                    <label for="f_name">First name</label>
+                                    <input required="true"  type="text"  name="f_name" class="form-control" id="f_name" placeholder="first name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="l_name">Last name</label>
+                                    <input required="true"  type="text" name="l_name" class="form-control" id="l_name" placeholder="last name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="student_birthday">Student birthday</label>
+                                    <input type="text"  name="birthday" class="form-control" id="student_birthday" placeholder="ex:2000-01-01">
+                                </div>
+                                <div class="form-group">
+                                    <label for="studentCourse">Select Course</label>
+                                    <select multiple name="studentCourse" class="form-control" style="height:200px">
+                                        {{#each courses}}
+                                            <option value="{{ this.CourseID }}" studentCourse="{{ this.CourseName }}" >{{ this.CourseID }}: {{ this.CourseName }}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-default">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 col-xs-12">
+                        <h3>Current Students</h3>
+                        <ul class="list-group">
+                            {{#each students}}
+                                <li class="list-group-item"><h4>{{ this.FirstName }} {{this.LastName}}: {{this.CWID}}</h4>
+                                     {{#each this.Courses}}
+                                     <h5>{{this.CourseID}}: {{this.CourseName}}</h5>
+                                    {{/each}}
+                                </li>
+                            {{/each}}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script>
+    $(document).ready(function () {
+        $('#student_birthday').datetimepicker({
+            format: 'yyyy-mm-dd',
+            startView: 4,
+            minView: 2,
+            initialDate: '2000-01-01'
+        });
+        $('#staff_birthday').datetimepicker({
+            format: 'yyyy-mm-dd',
+            startView: 4,
+            minView: 2,
+            initialDate: '1980-01-01'
+        });
+
+    })
+</script>

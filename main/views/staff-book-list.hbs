@@ -1,0 +1,114 @@
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css"/>
+<div class="container">
+    <div class="book-list">
+        <ol class="breadcrumb">
+            <li><a href="/staff/{{sid}}">Staff Home</a></li>
+            <li class="active">Modify book list</li>
+        </ol>
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title">Modify book list</h3>
+            </div>
+            <div class="panel-body">
+                <table id="book_table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                    <thead>
+                    <th>More</th>
+                    <th>ISBN</th>
+                    <th>Title</th>
+                    <th>Image</th>
+                    <th>Authors</th>
+                    <th>Total Available</th>
+                    <th>Total Checked</th>
+                    <th>Modify</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
+<script>
+    $(document).ready(function() {
+        var table;
+
+
+        $.ajax({
+                url: '/book/{{sid}}/Allbook',
+                dataType:'json',
+                data: {"staffID":"{{sid}}"},
+                type: 'POST'
+            }).done(function(data){
+                console.log(data);
+                table = $('#book_table').DataTable({
+                    "data": data,
+                    "columns": [
+                        {
+                            "class":'details-control',
+                            "orderable":false,
+                            "defaultContent": ''
+                        },
+                        { "data": "ISBN" },
+                        { "data": "Title" },
+                        { "data": "image"},
+                        { "data": "Authors"},
+                        { "data": "TotalAvailable"},
+                        { "data": "TotalChecked"},
+                        {
+                            "orderable":false,
+                            "data": "ISBN"
+                        }
+                    ],
+                    "columnDefs": [
+                        {
+                            "render": function ( data, type, row ) {
+                                return '<img src="'+data+'">';
+                            },
+                            "targets": 3
+                        },
+                        {
+                            "render": function ( data, type, row ) {
+                                return '<input value="'+ data +'" name="TotalAvailable" id="ta'+data+'" class="input-full" type="number">';
+                            },
+                            "targets": 5
+                        },
+                        {
+                            "render": function ( data, type, row ) {
+                                return '<input value="'+ data +'" name="TotalAvailable" id="ta'+data+'" class="input-full" type="number">';
+                            },
+                            "targets": 6
+                        },
+                        {
+                            "render": function ( data, type, row ) {
+                                return "<button ISBN='"+data+"' class='btn btn-danger update-to-database' onclick='UpdateToDB(this)'>update</button>";
+                            },
+                            "targets": 7
+                        }
+                    ],
+                    "initComplete":function(settings, json) {
+
+                    }
+                } );
+
+
+                $('#book_table tbody').on('click', 'td.details-control', function () {
+                    var tr = $(this).closest('tr');
+                    var row = table.row(tr);
+
+                    if ( row.child.isShown() ) {
+                        // This row is already open - close it
+                        row.child.hide();
+                        tr.removeClass('shown');
+                    }
+                    else {
+                        // Open this row
+                        var tb = new TableFormat();
+                        row.child( tb.book(row.data()) ).show();
+                        tr.addClass('shown');
+                    }
+                } );
+            });
+    } );
+</script>

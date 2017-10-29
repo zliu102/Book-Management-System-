@@ -1,0 +1,202 @@
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.13/datatables.min.css"/>
+<div class="container">
+    <div class="book-list">
+        <ol class="breadcrumb">
+            <li><a href="/staff/{{sid}}">Teacher Home</a></li>
+            <li class="active">Register a Course</li>
+        </ol>
+        <div class="col-xs-12">
+            <div class="row">
+                <div class="col-sm-3 col-xs-12">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{{staff.WorkFor.DeptID}} - {{staff.WorkFor.JobTitle}} - Your Class</h3>
+                        </div>
+                        <div class="panel-body">
+                            <ul id="Registered" class="nav nav-pills nav-stacked">
+                                {{#each staff.Teach}}
+                                <li role="presentation" value="{{this}}"><a href="#">{{this}}</a></li>
+                                {{/each}}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-9 col-xs-12">
+                    <ul id="teacher_tabs" class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active">
+                            <a class="add-class" href="#newClass" aria-controls="newClass" role="tab" data-toggle="tab">Register A New Class</a>
+                        </li>
+                        <li role="presentation">
+                            <a class="select-class" href="#selectClass" aria-controls="selectClass" role="tab" data-toggle="tab">Select A Class</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active fade in" id="newClass">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">Register A New Class</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div id="course">
+                                        <h3>add Course</h3>
+                                        <form class="form-group" action="/admin/add-course-info" method="post">
+                                            <div class="form-group">
+                                                <label for="CourseID">Course ID</label>
+                                                <input required="true" type="text" name="CourseID" class="form-control" id="CourseID" placeholder="CourseID">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="CourseName">Course Name</label>
+                                                <input required="true" type="text" name="CourseName" class="form-control" id="CourseName" placeholder="CourseName">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="departmentCourse">Department Name</label>
+                                                <input readonly="true" type="text" name="departmentCourse" value="{{staff.WorkFor.DeptID}}" class="form-control" id="departmentCourse">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="ClassBook">Select Class Book</label>
+                                                <select multiple name="ClassBook" class="form-control" style="height:200px">
+                                                    {{#each books}}
+                                                        <option ClassBook={{ this.ISBN }} >{{ this.ISBN }}<span>: {{ this.Title }}-{{ this.Authors }}</span></option>
+                                                    {{/each}}
+                                                </select>
+                                            </div>
+                                            <div class="form-group" style="display: none">
+                                                <label for="Teacher">Teacher</label>
+                                                <input readonly="true" type="text" name="Teacher" value="{{sid}}" class="form-control" id="Teacher">
+                                            </div>
+                                            <button type="submit" class="btn btn-default">Submit</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane fade" id="selectClass">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">
+                                    <div class="panel-title">Select A Class</div>
+                                </div>
+                                <div class="panel-body">
+                                    <table id="course_table" class="display" width="100%">
+                                        <thead>
+                                        <th>CourseID</th>
+                                        <th>CourseName</th>
+                                        <th>Books</th>
+                                        <th>Register</th>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.13/datatables.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var classTable;
+        var registeredCourse = [];
+        for(var i = 0;i< $('#Registered').children('li').length;i++){
+            registeredCourse.push($('#Registered').children('li').eq(i).attr('value'));
+        }
+
+        $('#teacher_tabs a').click(function (e) {
+            if ($(this).attr('class')==='select-class'){
+                if($('#course_table tbody').children().length === 0){
+                    $.ajax({
+                        url: '/teacher/{{sid}}/get-course',
+                        dataType:'json',
+                        data: {"staffID":"{{sid}}"},
+                        type: 'POST'
+                    }).done(function(data){
+//                        var registeredCourse = data.Teach;
+                        console.log(registeredCourse);
+                        classTable = $('#course_table').DataTable({
+                            "data": data,
+                            "columns": [
+                                { "data": "CourseID" },
+                                { "data": "CourseName"},
+                                { "data": "Books"},
+                                {
+                                    "orderable":false,
+                                    "defaultContent": ''
+                                }
+                            ],
+                            "columnDefs": [
+                                {
+                                    "render": function ( data, type, row ) {
+                                        for(var i = 0; i< registeredCourse.length ;i++){
+                                            if(registeredCourse[i] === row.CourseID){
+                                                return "<div>Registered</div>"
+                                            }
+                                        }
+                                        return "<button class='btn btn-danger register' CourseID='"+row.CourseID+"'>Register</button>";
+                                    },
+                                    "targets": 3
+                                },
+                                {
+                                    "render": function ( data, type, row ) {
+                                        var b = "";
+                                        for(var i=0; i<data.length; i++){
+                                            b +='<h4><a class="label label-success" href="/book/'+data[i]+'/view">'+data[i]+'</a></h4>'
+                                        }
+                                        return b;
+                                    },
+                                    "targets": 2
+                                }
+                            ],
+                            "initComplete": function(settings, json) {
+                                $("#course_table tbody").on('click','.register',function () {
+                                    var $this = $(this);
+                                    var CourseID = $(this).attr('CourseID');
+                                    console.log(CourseID);
+                                    swal({title: "you are going to teach : " + CourseID,
+                                                type: "warning",
+                                                showCancelButton: true,
+                                                confirmButtonText: "Yes, I am!",
+                                                cancelButtonText: "No!",
+                                                closeOnConfirm: false,
+                                                closeOnCancel: false},
+                                            function(isConfirm){
+                                                if (isConfirm) {
+                                                    console.log(CourseID);
+                                                    $.ajax({
+                                                        url: '/teacher/{{sid}}/register',
+                                                        dataType:'json',
+                                                        data: {"Course":CourseID},
+                                                        type: 'POST'
+                                                    }).done(function(data){
+                                                        if(data){
+                                                            $('.nav-stacked').append('<li role="presentation"><a href="#">'+ CourseID+'</a></li>');
+                                                            $this.parent().html('<div>Registered</div>');
+                                                        }else{
+                                                            swal("error", "Your didn't register this course", "error");
+                                                        }
+                                                    });
+                                                    swal("Done!", "Your are teaching this Course now", "success");
+                                                } else {
+
+                                                    swal("Cancelled", "Your cancelled to register", "error");
+                                                }
+                                            });
+                                });
+                            }
+                        });
+                    });
+                }else {
+
+                }
+            }
+            e.preventDefault()
+            $(this).tab('show')
+        })
+
+
+    });
+
+</script>
